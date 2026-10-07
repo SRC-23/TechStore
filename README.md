@@ -4,7 +4,7 @@
 ## 1. Introducción
 
 Cliente: **TechStore (Pyme)** · Propietario: **Alfredo Rodríguez**
-Proyecto SC-803 Implantación de Sistemas · Grupo 5 · Universidad Fidélitas
+Proyecto SC-803 Implantación de Sistemas · Grupo 4 · Universidad Fidélitas
 
 Aplicación web completa con **ASP.NET Core 8 Web API** + **React 18 (TypeScript, Tailwind)** + **SQL Server / Azure SQL**.
 El núcleo es un **motor de precios y descuentos** con 7 tipos de reglas, prioridades y acumulabilidad.Catálogo de 71 productos en 12 categorías con precios en colones (IVA incluido).
