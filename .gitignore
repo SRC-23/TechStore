@@ -1,0 +1,44 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+[Dd]ebug/
+[Rr]elease/
+
+## NuGet
+*.nupkg
+**/packages/*
+project.lock.json
+
+## Node/Frontend
+node_modules/
+dist/
+build/
+.env
+.env.local
+
+## IDE
+.idea/
+*.swp
+*.swo
+.vscode/
+
+## OS
+.DS_Store
+Thumbs.db
+
+## EF Migrations local DB
+*.mdf
+*.ldf
+
+# Pruebas automatizadas
+tests/e2e/node_modules/
+tests/e2e/reports/
+tests/e2e/test-results/
+publish/
+publish.zip
+src/TechStore.API/wwwroot/

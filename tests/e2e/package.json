@@ -1,0 +1,22 @@
+{
+  "name": "techstore-e2e",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Pruebas automatizadas de TechStore (QA02): Playwright + axe-core + k6",
+  "scripts": {
+    "install:browsers": "playwright install chromium firefox",
+    "test": "playwright test --project=chromium",
+    "test:compat": "playwright test --grep @compat",
+    "test:smoke": "playwright test --project=chromium --grep @smoke",
+    "test:all": "playwright test",
+    "report": "playwright show-report reports/html",
+    "load:catalog": "k6 run k6/catalog-load.js",
+    "load:cart": "k6 run k6/cart-load.js"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.10.0",
+    "@playwright/test": "^1.48.0",
+    "@types/node": "^20.14.0",
+    "typescript": "^5.5.3"
+  }
+}
