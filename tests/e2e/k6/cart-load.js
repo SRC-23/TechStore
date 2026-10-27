@@ -35,7 +35,7 @@ export function setup() {
 
 export default function (data) {
   const token = data.tokens[(__VU - 1) % data.tokens.length];
-  const auth = { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` } };
+  const auth = { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, 'X-Auth-Token': token } };
   const productId = data.products[Math.floor(Math.random() * data.products.length)];
 
   const res = http.post(`${BASE_URL}/api/cart/items`, JSON.stringify({ productId, quantity: 1 }), { ...auth, tags: { name: 'addItem' } });

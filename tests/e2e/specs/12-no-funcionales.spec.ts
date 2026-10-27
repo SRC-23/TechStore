@@ -123,7 +123,7 @@ test.describe('RNF Seguridad', () => {
   });
 
   test('TC-130 RNF-08 Comunicación cifrada (HTTP redirige a HTTPS)', async () => {
-    test.skip(!BASE_URL.startsWith('https://'), 'Solo aplica al ambiente publicado en Azure (BASE_URL con https)');
+    test.skip(!BASE_URL.startsWith('https://'), 'Solo aplica al ambiente publicado en AWS (BASE_URL con https de CloudFront)');
     const anon = await Api.anonymous();
     const res = await anon.ctx.get(BASE_URL.replace('https://', 'http://'), { maxRedirects: 0 });
     expect([301, 302, 307, 308]).toContain(res.status());
@@ -249,8 +249,8 @@ test.describe('RNF Fiabilidad, mantenibilidad y portabilidad', () => {
   });
 
   test('TC-137 RNF-15 Disponibilidad del servicio (comprobación periódica)', async () => {
-    // El monitoreo continuo en producción lo hace una prueba de disponibilidad de
-    // Application Insights; aquí se verifica la misma condición en 10 sondeos.
+    // El monitoreo continuo en producción lo hace un canario de
+    // Amazon CloudWatch Synthetics; aquí se verifica la misma condición en 10 sondeos.
     const anon = await Api.anonymous();
     for (let i = 0; i < 10; i++) {
       const started = Date.now();
@@ -263,10 +263,10 @@ test.describe('RNF Fiabilidad, mantenibilidad y portabilidad', () => {
     await anon.dispose();
   });
 
-  test('TC-138 RNF-16 Respaldo y recuperación de la base de datos (Azure SQL PITR)', async () => {
-    test.skip(!process.env.AZURE_SQL_SERVER, 'Requiere variables AZURE_RESOURCE_GROUP, AZURE_SQL_SERVER y AZURE_SQL_DB (ambiente Azure)');
+  test('TC-138 RNF-16 Respaldo y recuperación de la base de datos (Amazon RDS PITR)', async () => {
+    test.skip(!process.env.AWS_RDS_INSTANCE, 'Requiere AWS CLI configurado y las variables AWS_REGION y AWS_RDS_INSTANCE (ambiente AWS)');
     test.setTimeout(3_600_000);
-    run('powershell -NoProfile -ExecutionPolicy Bypass -File scripts/azure/test-restore.ps1', E2E_DIR);
+    run('powershell -NoProfile -ExecutionPolicy Bypass -File scripts/aws/test-restore.ps1', E2E_DIR);
   });
 
   test('TC-139 RNF-17 Pruebas unitarias del core (dotnet test)', async () => {

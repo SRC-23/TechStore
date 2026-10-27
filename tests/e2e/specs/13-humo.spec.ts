@@ -7,7 +7,7 @@ import { expectToast, loginWithForm } from '../helpers/ui';
  * Prueba de humo post-instalación (RNF-18 / PR02).
  *
  * Se ejecuta contra el ambiente recién desplegado y NO modifica datos:
- *   $env:BASE_URL="https://techstore-cr.azurewebsites.net"; npm run test:smoke
+ *   $env:BASE_URL="https://xxxxxxxx.cloudfront.net"; npm run test:smoke
  * Si la contraseña del admin ya se cambió en producción, defínela en ADMIN_PASSWORD.
  */
 test('TC-140 RNF-18 Instalabilidad: prueba de humo post-instalación @smoke', async ({ page }) => {

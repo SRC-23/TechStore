@@ -13,6 +13,8 @@ api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
+    // CloudFront (AWS) no reenvía Authorization en GET; la API también lee este encabezado.
+    config.headers['X-Auth-Token'] = token;
   }
   return config;
 });

@@ -11,8 +11,8 @@ Los **140 casos de prueba** del documento QA02 están automatizados. Cada prueba
 | Compatibilidad (Chrome, Firefox, Edge) | Playwright | TC-135 | `@compat` |
 | Integridad, disponibilidad, unitarias | Playwright + xUnit | TC-136, TC-137, TC-139 | `specs/12-no-funcionales.spec.ts` |
 | Vulnerabilidades | OWASP ZAP (Docker) | TC-131 | `specs/12-no-funcionales.spec.ts` |
-| Respaldo y recuperación | Azure CLI | TC-138 | `scripts/azure/test-restore.ps1` |
-| Instalación + humo | Azure CLI + Playwright | TC-140 | `scripts/azure/deploy.ps1`, `specs/13-humo.spec.ts` |
+| Respaldo y recuperación | AWS CLI | TC-138 | `scripts/aws/test-restore.ps1` |
+| Instalación + humo | AWS CLI + Playwright | TC-140 | `scripts/aws/deploy.ps1`, `specs/13-humo.spec.ts` |
 
 ---
 
@@ -28,7 +28,7 @@ Edge ya viene instalado en Windows.
 **Opcionales** (si no están instalados, esas pruebas aparecen como *skipped* con el motivo):
 - **k6** (TC-123, TC-124): `winget install k6 --source winget`
 - **Docker Desktop** (TC-131, OWASP ZAP)
-- **Azure CLI** (TC-138): `winget install Microsoft.AzureCLI`
+- **AWS CLI v2** (TC-138, TC-140): `winget install Amazon.AWSCLI` y luego `aws configure`
 
 ## 2. Ejecutar
 
@@ -60,26 +60,28 @@ Cada ejecución guarda en `reports/`:
 - `junit.xml` y `results.json`: resultados para adjuntar o importar.
 - `zap-report.html`: reporte de OWASP ZAP (si se ejecutó TC-131).
 
-## 4. En Azure
+## 4. En AWS
 
-Contra el ambiente QA (con `Testing__Enabled=true` en la configuración del App Service):
+Contra el ambiente QA (Elastic Beanstalk `techstore-qa`, con la propiedad `Testing__Enabled=true`):
 ```powershell
-$env:BASE_URL="https://techstore-qa.azurewebsites.net"
+$env:BASE_URL="http://techstore-qa.us-east-1.elasticbeanstalk.com"
 npm test
 ```
 
-Prueba de humo contra producción (**no modifica datos**):
+Prueba de humo contra producción por CloudFront (**no modifica datos**):
 ```powershell
-$env:BASE_URL="https://techstore-cr.azurewebsites.net"
+$env:BASE_URL="https://xxxxxxxx.cloudfront.net"
 $env:ADMIN_PASSWORD="<contraseña actual del admin>"
 npm run test:smoke
+npx playwright test --grep "TC-130"   # HTTPS (RNF-08)
 ```
 
 Despliegue automatizado + humo (TC-140) y respaldo (TC-138):
 ```powershell
-$env:AZURE_RESOURCE_GROUP="rg-techstore"; $env:AZURE_WEBAPP="techstore-cr"
-powershell -ExecutionPolicy Bypass -File scripts\azure\deploy.ps1
+$env:AWS_REGION="us-east-1"; $env:AWS_EB_APP="techstore"; $env:AWS_EB_ENV="techstore-prod"
+$env:BASE_URL="https://xxxxxxxx.cloudfront.net"
+powershell -ExecutionPolicy Bypass -File scripts\aws\deploy.ps1
 
-$env:AZURE_SQL_SERVER="techstore-sql-sr"; $env:AZURE_SQL_DB="TechStoreDb"
+$env:AWS_RDS_INSTANCE="techstore-db"
 npx playwright test --grep "TC-138"
 ```

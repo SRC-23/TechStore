@@ -58,7 +58,11 @@ export class Api {
   }
 
   static async as(session: Session): Promise<Api> {
-    const ctx = await request.newContext({ baseURL: BASE_URL, extraHTTPHeaders: { Authorization: `Bearer ${session.token}` } });
+    // X-Auth-Token: CloudFront (AWS) no reenvía Authorization en GET.
+    const ctx = await request.newContext({
+      baseURL: BASE_URL,
+      extraHTTPHeaders: { Authorization: `Bearer ${session.token}`, 'X-Auth-Token': session.token },
+    });
     return new Api(ctx, session);
   }
 

@@ -14,8 +14,8 @@ using TechStore.Infrastructure.Services.PricingEngine;
 var builder = WebApplication.CreateBuilder(args);
 
 // Database
-// EnableRetryOnFailure: Azure SQL (nivel gratuito serverless) se pausa cuando no
-// se usa y la primera conexión falla mientras se reanuda; EF reintenta solo.
+// EnableRetryOnFailure: en la nube (Amazon RDS) puede haber cortes breves de red o
+// reinicios de la instancia; EF reintenta la conexión automáticamente.
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), sql =>
     {
@@ -46,6 +46,23 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(secretKey),
         NameClaimType = System.Security.Claims.ClaimTypes.Name,
         RoleClaimType = System.Security.Claims.ClaimTypes.Role
+    };
+
+    // En AWS la app está detrás de CloudFront, que no reenvía el encabezado
+    // Authorization en las peticiones GET. La web envía el mismo token también en
+    // X-Auth-Token y aquí se usa cuando Authorization no llega.
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            if (string.IsNullOrEmpty(context.Request.Headers.Authorization) &&
+                context.Request.Headers.TryGetValue("X-Auth-Token", out var token) &&
+                !string.IsNullOrWhiteSpace(token))
+            {
+                context.Token = token.ToString();
+            }
+            return Task.CompletedTask;
+        }
     };
 });
 
@@ -158,7 +175,7 @@ using (var scope = app.Services.CreateScope())
 // El manejador de excepciones va PRIMERO para capturar todo lo que ocurra después.
 app.UseMiddleware<ExceptionMiddleware>();
 
-// Swagger siempre en desarrollo; en Azure se activa con la configuración
+// Swagger siempre en desarrollo; en AWS se activa con la configuración
 // "Swagger:Enabled" = true para que el grupo par pueda ejecutar las pruebas de API.
 if (app.Environment.IsDevelopment() || app.Configuration.GetValue<bool>("Swagger:Enabled"))
 {

@@ -28,7 +28,7 @@ public class TestingController : ControllerBase
     /// <summary>
     /// Borra todos los datos y vuelve a cargar los datos semilla, para que cada
     /// archivo de pruebas empiece desde el mismo estado. No elimina la base de
-    /// datos (en Azure eso cambiaría su nivel de servicio).
+    /// datos (en la nube eso eliminaría la base administrada).
     /// </summary>
     [HttpPost("reset")]
     public async Task<ActionResult> Reset()
